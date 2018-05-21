@@ -25,16 +25,14 @@ import GoogLeNet
 parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Traning')
 
 parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
-parser.add_argument('--world-size', default=1, type=int, help='number of distributed processes')
-parser.add_argument('--dist-url', default='tcp://49.236.135.132:18888', type=str, help='url used to set up distributed training')
+parser.add_argument('--world-size', default=1, type=int, help='number of distributed processes (default=1)')
+parser.add_argument('--dist-url', type=str, help='url used to set up distributed training')
 parser.add_argument('--resume', '-r', action='store_true', help='resume from checkpoint')
 
 args = parser.parse_args()
 
 args.distributed = args.world_size > 1
-print('Arguments: ', args)
-
-use_cuda = torch.cuda.is_available()
+args.use_cuda = torch.cuda.is_available()
 
 best_accuracy = 0
 start_epoch = 0
@@ -53,19 +51,13 @@ transform_test = transforms.Compose([
     transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
 ])
 
-
 trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_tran)
-trainloader = torch.utils.data.DataLoader(trainset, 
-                                          batch_size=128,
-                                          shuffle=True,
-                                          num_workers=1)
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=128, shuffle=True, num_workers=1)
 
 testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
 testloader = torch.utils.data.DataLoader(testset, batch_size=100, shuffle=False, num_workers=1, pin_memory=True)
 
-
 classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
-
 
 if args.resume:
     print('===> Resuming from checkpoint...')
@@ -82,13 +74,18 @@ else:
 if args.distributed:
     dist.init_process_group(backend='gloo', init_method=args.dist_url, world_size=args.world_size)
 
-if use_cuda:
-    net.cuda() # move all tensors to GPU
-    net = torch.nn.parallel.DistributedDataParallel(net)
+if args.distributed:
+    if args.use_cuda:
+        net = torch.nn.parallel.DistributedDataParallel(net)
+        net.cuda()
+    else:
+        net = torch.nn.parallel.DistributedDataParallelCPU(net)
 else:
-    net = torch.nn.DataParallel(net)
-criterion = nn.CrossEntropyLoss().cuda()
+    if args.use_cuda:
+        net = torch.nn.parallel.DataParallel(net)
+        net.cuda()
 
+criterion = nn.CrossEntropyLoss().cuda() if args.use_cuda else nn.CrossEntropyLoss() 
 optimizer = torch.optim.SGD(net.parameters(), args.lr, momentum=0.9, weight_decay=5e-4)
 
 # Training
@@ -104,7 +101,7 @@ def train(epoch):
     progress_bar_obj = get_progress_bar(len(testloader))
 
     for batch_idx, (inputs, targets) in enumerate(trainloader):
-        if use_cuda:
+        if args.use_cuda:
             inputs, targets = inputs.cuda(), targets.cuda()
         optimizer.zero_grad()
         inputs, targets = Variable(inputs), Variable(targets)
@@ -114,7 +111,7 @@ def train(epoch):
         optimizer.step()
 
         train_loss += loss.data[0]
-        _, predicted = torch.argmax(outputs.data, 1)
+        _, predicted = torch.max(outputs.data, 1)
         total += targets.size(0)
         correct += predicted.eq(targets.data).cpu().sum()
 
@@ -126,7 +123,7 @@ def train(epoch):
         if acc > best_accuracy:
             print('\nSaving..')
             state = {
-                'net': net.module if use_cuda else net,
+                'net': net.module if args.use_cuda else net,
                 'acc': acc,
                 'epoch': epoch,
             }
@@ -145,7 +142,7 @@ def test(epoch):
     total = 0
     progress_bar_obj = get_progress_bar(len(testloader))
     for batch_idx, (inputs, targets) in enumerate(testloader):
-        if use_cuda:
+        if args.use_cuda:
             inputs, targets = inputs.cuda(), targets.cuda()
         inputs, targets = Variable(inputs, volatile=True), Variable(targets)
         outputs = net(inputs)
@@ -164,7 +161,7 @@ def test(epoch):
     if acc > best_accuracy:
         print('\nSaving..')
         state = {
-            'net': net.module if use_cuda else net,
+            'net': net.module if args.use_cuda else net,
             'acc': acc,
             'epoch': epoch,
         }
