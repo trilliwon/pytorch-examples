@@ -76,12 +76,15 @@ if args.distributed:
 
 if args.distributed:
     if args.use_cuda:
+        print('===> DistributedDataParallel')
         net = torch.nn.parallel.DistributedDataParallel(net)
         net.cuda()
     else:
+        print('===> DistributedDataParallelCPU')
         net = torch.nn.parallel.DistributedDataParallelCPU(net)
 else:
     if args.use_cuda:
+        print('===> DataParallel')
         net = torch.nn.parallel.DataParallel(net)
         net.cuda()
 
@@ -153,8 +156,7 @@ def test(epoch):
         total += targets.size(0)
         correct += predicted.eq(targets.data).cpu().sum()
 
-        update_progress_bar(progress_bar_obj, index=batch_idx, loss=(test_loss / (batch_idx + 1)),
-                            acc=(correct / total), c=correct, t=total)
+        update_progress_bar(progress_bar_obj, index=batch_idx, loss=(test_loss / (batch_idx + 1)), acc=(correct / total), c=correct, t=total)
 
     # Save checkpoint.
     acc = 100.*correct/total
