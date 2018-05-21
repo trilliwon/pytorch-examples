@@ -118,8 +118,7 @@ def train(epoch):
         total += targets.size(0)
         correct += predicted.eq(targets.data).cpu().sum()
 
-        update_progress_bar(progress_bar_obj, index=batch_idx, loss=(train_loss / (batch_idx + 1)),
-                            acc=(correct / total), c=correct, t=total)
+        update_progress_bar(progress_bar_obj, index=batch_idx, loss=(train_loss / (batch_idx + 1)), acc=(correct / total), c=correct, t=total)
         
         # Save checkpoint.
         acc = 100.*correct/total
@@ -152,7 +151,7 @@ def test(epoch):
         loss = criterion(outputs, targets)
 
         test_loss += loss.data[0]
-        _, predicted = torch.argmax(outputs.data, 1)
+        _, predicted = torch.max(outputs.data, 1)
         total += targets.size(0)
         correct += predicted.eq(targets.data).cpu().sum()
 
