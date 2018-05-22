@@ -104,6 +104,7 @@ def train(epoch):
     progress_bar_obj = get_progress_bar(len(testloader))
 
     for batch_idx, (inputs, targets) in enumerate(trainloader):
+        print('batch index ===> ', batch_idx)
         if args.use_cuda:
             inputs, targets = inputs.cuda(), targets.cuda()
         optimizer.zero_grad()
