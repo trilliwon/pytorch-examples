@@ -176,8 +176,8 @@ def validate():
 
     with torch.no_grad():
         for data in testloader:
-            images, labels = data
-            outputs = net(images).to(device)
+            images, labels = data.to(device)
+            outputs = net(images)
             _, predicted = torch.max(outputs, 1)
             c = (predicted == labels).squeeze()
             for i in range(4):
