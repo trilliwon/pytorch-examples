@@ -80,7 +80,7 @@ if args.distributed:
     if args.use_cuda:
         print('===> DistributedDataParallel')
         net = torch.nn.parallel.DistributedDataParallel(net)
-        net.cuda()
+        net.to(device)
     else:
         print('===> DistributedDataParallelCPU')
         net = torch.nn.parallel.DistributedDataParallelCPU(net)
@@ -88,7 +88,7 @@ else:
     if args.use_cuda:
         print('===> DataParallel')
         net = torch.nn.parallel.DataParallel(net)
-        net.cuda()
+        net.to(device)
 
 criterion = nn.CrossEntropyLoss().cuda() if args.use_cuda else nn.CrossEntropyLoss() 
 optimizer = torch.optim.SGD(net.parameters(), args.lr, momentum=0.9, weight_decay=5e-4)
@@ -169,6 +169,25 @@ def test(epoch):
         torch.save(state, './checkpoint/ckpt.t7')
         best_accuracy = acc
 
-for epoch in range(start_epoch, start_epoch+args.epochs):
-    train(epoch)
-    test(epoch)
+if __name__ == '__main__':
+    for epoch in range(start_epoch, start_epoch+args.epochs):
+        train(epoch)
+        test(epoch)
+    
+    class_correct = list(0. for i in range(10))
+    class_total = list(0. for i in range(10))
+
+    with torch.no_grad():
+        for data in testloader:
+            images, labels = data
+            outputs = net(images)
+            _, predicted = torch.max(outputs, 1)
+            c = (predicted == labels).squeeze()
+            for i in range(4):
+                label = labels[i]
+                class_correct[label] += c[i].item()
+                class_total[label] += 1
+
+    for i in range(10):
+        print('Accuracy of %5s : %2d %%' % (
+            classes[i], 100 * class_correct[i] / class_total[i]))
