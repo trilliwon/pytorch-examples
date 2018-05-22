@@ -16,8 +16,7 @@ from torch.autograd import Variable
 import torchvision
 import torchvision.transforms as transforms
 
-
-from utils import get_progress_bar, update_progress_bar
+from utils import progress_bar
 
 # Module
 import GoogLeNet
@@ -119,7 +118,7 @@ def train(epoch):
         total += targets.size(0)
         correct += predicted.eq(targets.data).cpu().sum()
 
-        update_progress_bar(progress_bar_obj, index=batch_idx, loss=(train_loss / (batch_idx + 1)), acc=(correct / total), c=correct, t=total)
+        progress_bar(batch_idx, len(trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)' % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
         
         # Save checkpoint.
         acc = 100.*correct/total
@@ -143,7 +142,7 @@ def test(epoch):
     test_loss = 0
     correct = 0
     total = 0
-    progress_bar_obj = get_progress_bar(len(testloader))
+    
     for batch_idx, (inputs, targets) in enumerate(testloader):
         if args.use_cuda:
             inputs, targets = inputs.cuda(), targets.cuda()
@@ -155,8 +154,7 @@ def test(epoch):
         _, predicted = torch.max(outputs.data, 1)
         total += targets.size(0)
         correct += predicted.eq(targets.data).cpu().sum()
-
-        update_progress_bar(progress_bar_obj, index=batch_idx, loss=(test_loss / (batch_idx + 1)), acc=(correct / total), c=correct, t=total)
+        progress_bar(batch_idx, len(trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)' % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
 
     # Save checkpoint.
     acc = 100.*correct/total
