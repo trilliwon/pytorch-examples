@@ -177,8 +177,9 @@ def validate():
     with torch.no_grad():
         for data in testloader:
             images, labels = data
-            images.cuda()
-            labels.cuda()
+            if args.use_cuda:
+                images, labels = images.to(device), labels.cuda(non_blocking=True)
+ 
             outputs = net(images)
             _, predicted = torch.max(outputs, 1)
             c = (predicted == labels).squeeze()
