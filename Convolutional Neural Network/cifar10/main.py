@@ -169,11 +169,8 @@ def test(epoch):
         torch.save(state, './checkpoint/ckpt.t7')
         best_accuracy = acc
 
-if __name__ == '__main__':
-    for epoch in range(start_epoch, start_epoch+args.epochs):
-        train(epoch)
-        test(epoch)
-    
+def validate():
+    print('============================> Validating')
     class_correct = list(0. for i in range(10))
     class_total = list(0. for i in range(10))
 
@@ -190,3 +187,11 @@ if __name__ == '__main__':
 
     for i in range(10):
         print('Accuracy of %5s : %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
+    print('========================================')
+
+if __name__ == '__main__':
+    for epoch in range(start_epoch, start_epoch+args.epochs):
+        train(epoch)
+        test(epoch)
+        validate()
+    
