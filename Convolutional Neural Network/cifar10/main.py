@@ -105,7 +105,6 @@ def train(epoch):
         if args.use_cuda:
             inputs, targets = inputs.cuda(), targets.cuda()
         optimizer.zero_grad()
-        inputs, targets = Variable(inputs), Variable(targets)
         outputs = net(inputs)
         loss = criterion(outputs, targets)
         loss.backward()
@@ -144,7 +143,8 @@ def test(epoch):
     for batch_idx, (inputs, targets) in enumerate(testloader):
         if args.use_cuda:
             inputs, targets = inputs.cuda(), targets.cuda()
-        inputs, targets = Variable(inputs, volatile=True), Variable(targets)
+        else:
+            inputs, targets = inputs, targets
         outputs = net(inputs)
         loss = criterion(outputs, targets)
 
