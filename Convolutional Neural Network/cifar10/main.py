@@ -100,7 +100,6 @@ def train(epoch):
     correct = 0
     total = 0
     global best_accuracy
-    progress_bar_obj = get_progress_bar(len(testloader))
 
     for batch_idx, (inputs, targets) in enumerate(trainloader):
         print('batch index ===> ', batch_idx)
