@@ -104,7 +104,8 @@ def train(epoch):
     global best_accuracy
 
     for batch_idx, (inputs, targets) in enumerate(trainloader):
-        inputs, targets = inputs.to(device), targets.to(device)
+        if args.use_cuda:
+            inputs, targets = inputs.to(device), targets.cuda(non_blocking=True))
         optimizer.zero_grad()
         outputs = net(inputs)
         loss = criterion(outputs, targets)
@@ -142,7 +143,8 @@ def test(epoch):
     total = 0
 
     for batch_idx, (inputs, targets) in enumerate(testloader):
-        inputs, targets = inputs.to(device), targets.to(device)
+        if args.use_cuda:
+            inputs, targets = inputs.to(device), targets.cuda(non_blocking=True)
         outputs = net(inputs)
         loss = criterion(outputs, targets)
 
