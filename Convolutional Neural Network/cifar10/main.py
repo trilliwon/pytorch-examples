@@ -33,6 +33,7 @@ args = parser.parse_args()
 
 args.distributed = args.world_size > 1
 args.use_cuda = torch.cuda.is_available()
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 best_accuracy = 0
 start_epoch = 0
@@ -103,8 +104,7 @@ def train(epoch):
     global best_accuracy
 
     for batch_idx, (inputs, targets) in enumerate(trainloader):
-        if args.use_cuda:
-            inputs, targets = inputs.cuda(), targets.cuda()
+        inputs, targets = inputs.to(device), targets.to(device)
         optimizer.zero_grad()
         outputs = net(inputs)
         loss = criterion(outputs, targets)
@@ -142,10 +142,7 @@ def test(epoch):
     total = 0
 
     for batch_idx, (inputs, targets) in enumerate(testloader):
-        if args.use_cuda:
-            inputs, targets = inputs.cuda(), targets.cuda()
-        else:
-            inputs, targets = inputs, targets
+        inputs, targets = inputs.to(device), targets.to(device)
         outputs = net(inputs)
         loss = criterion(outputs, targets)
 
