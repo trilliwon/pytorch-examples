@@ -102,7 +102,6 @@ def train(epoch):
     global best_accuracy
 
     for batch_idx, (inputs, targets) in enumerate(trainloader):
-        print('batch index ===> ', batch_idx)
         if args.use_cuda:
             inputs, targets = inputs.cuda(), targets.cuda()
         optimizer.zero_grad()
