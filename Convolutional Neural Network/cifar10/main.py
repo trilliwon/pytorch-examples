@@ -65,7 +65,7 @@ if args.resume:
     checkpoint = torch.load('./checkpoint/ckpt.t7')
     net = checkpoint['net']
     best_acc = checkpoint['acc']
-    start_epoch = checkpoint['ephoc']
+    start_epoch = checkpoint['epoch']
 else:
     print('===> Building model...')
     net = GoogLeNet.GoogLeNet()
