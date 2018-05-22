@@ -28,7 +28,7 @@ parser.add_argument('--world-size', default=1, type=int, help='number of distrib
 parser.add_argument('--dist-url', type=str, help='url used to set up distributed training')
 parser.add_argument('--resume', '-r', action='store_true', help='resume from checkpoint')
 parser.add_argument('--epochs', default=3, type=int, metavar='N', help='number of total epochs to run')
-
+parser.add_argument('--rank', default=0, type=int, help='current node rank')
 args = parser.parse_args()
 
 args.distributed = args.world_size > 1
@@ -74,7 +74,7 @@ else:
 
 if args.distributed:
     print('===> Distributed Training Mode')
-    dist.init_process_group(backend='gloo', init_method=args.dist_url, world_size=args.world_size)
+    dist.init_process_group(backend='gloo', init_method=args.dist_url, rank=args.rank, world_size=args.world_size)
 
 if args.distributed:
     if args.use_cuda:
