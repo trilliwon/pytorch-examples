@@ -73,6 +73,7 @@ else:
     net = GoogLeNet.GoogLeNet()
 
 if args.distributed:
+    print('===> Distributed Training Mode')
     dist.init_process_group(backend='gloo', init_method=args.dist_url, world_size=args.world_size)
 
 if args.distributed:
