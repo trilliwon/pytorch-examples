@@ -27,6 +27,7 @@ parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
 parser.add_argument('--world-size', default=1, type=int, help='number of distributed processes (default=1)')
 parser.add_argument('--dist-url', type=str, help='url used to set up distributed training')
 parser.add_argument('--resume', '-r', action='store_true', help='resume from checkpoint')
+parser.add_argument('--epochs', default=3, type=int, metavar='N', help='number of total epochs to run')
 
 args = parser.parse_args()
 
@@ -168,6 +169,6 @@ def test(epoch):
         torch.save(state, './checkpoint/ckpt.t7')
         best_accuracy = acc
 
-for epoch in range(start_epoch, start_epoch+200):
+for epoch in range(start_epoch, start_epoch+args.epochs):
     train(epoch)
     test(epoch)
