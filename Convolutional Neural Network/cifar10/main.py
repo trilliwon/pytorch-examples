@@ -19,7 +19,7 @@ import torchvision.transforms as transforms
 from utils import progress_bar
 
 # Module
-import GoogLeNet
+import googlenet
 
 parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Traning')
 
@@ -70,7 +70,7 @@ if args.resume:
     start_epoch = checkpoint['epoch']
 else:
     print('===> Building model...')
-    net = GoogLeNet.GoogLeNet()
+    net = googlenet.GoogLeNet()
 
 if args.distributed:
     print('===> Distributed Training Mode')
