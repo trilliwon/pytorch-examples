@@ -86,7 +86,7 @@ def imshow(img):
     plt.imshow(np.transpose(npimg, (1, 2, 0)))
 
 # [make_grid](https://pytorch.org/docs/stable/torchvision/utils.html#torchvision.utils.make_grid)
-imshow(torchvision.utils.make_grid(inputs))
+# imshow(torchvision.utils.make_grid(inputs))
 
 print(', '.join('%7s' % classes[labels[j]] for j in range(4)))
 
@@ -100,7 +100,7 @@ GPU 사용하기
 print('\n===> Training Start')
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-
+net.to(device)
 if torch.cuda.device_count() > 1:
     print('\n===> Training on GPU!')
     net = nn.DataParallel(net)
