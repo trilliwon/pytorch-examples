@@ -1,7 +1,3 @@
-# README
-
-![](.gitbook/assets/pytorch-logo-dark.png)
-
 ## PyTorch Examples
 
 * [Neural Network](Neural%20Network)
