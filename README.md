@@ -4,5 +4,5 @@
 
 ## PyTorch Examples
 
-* [Neural Network](https://github.com/trilliwon/pytorch-basics/tree/master/Neural%20Network)
-
+* [Neural Network](Neural%20Network)
+* [Convolutional neural Network](Convolutional%20Neural%20Network)
