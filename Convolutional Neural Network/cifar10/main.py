@@ -80,16 +80,16 @@ if args.distributed:
 if args.distributed:
     if args.use_cuda:
         print('===> DistributedDataParallel')
-        net = torch.nn.parallel.DistributedDataParallel(net)
         net.to(device)
+        net = torch.nn.parallel.DistributedDataParallel(net)
     else:
         print('===> DistributedDataParallelCPU')
         net = torch.nn.parallel.DistributedDataParallelCPU(net)
 else:
     if args.use_cuda:
         print('===> DataParallel')
-        net = torch.nn.parallel.DataParallel(net)
         net.to(device)
+        net = torch.nn.parallel.DataParallel(net)
 
 criterion = nn.CrossEntropyLoss().cuda() if args.use_cuda else nn.CrossEntropyLoss() 
 optimizer = torch.optim.SGD(net.parameters(), args.lr, momentum=0.9, weight_decay=5e-4)
