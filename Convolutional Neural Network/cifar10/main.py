@@ -35,6 +35,7 @@ args.distributed = args.world_size > 1
 args.use_cuda = torch.cuda.is_available()
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+print('===> training on: ', device)
 best_accuracy = 0
 start_epoch = 0
 
