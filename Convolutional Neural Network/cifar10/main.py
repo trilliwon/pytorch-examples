@@ -24,7 +24,7 @@ import googlenet
 parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Traning')
 
 parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
-parser.add_argument('--backend', default='nccl', type=str)
+parser.add_argument('--backend', default='gloo', type=str)
 parser.add_argument('--world-size', default=1, type=int, help='number of distributed processes (default=1)')
 parser.add_argument('--dist-url', type=str, help='url used to set up distributed training')
 parser.add_argument('--resume', '-r', action='store_true', help='resume from checkpoint')
