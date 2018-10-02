@@ -18,6 +18,10 @@ import torchvision.transforms as transforms
 
 from utils import progress_bar
 
+# better distributed
+
+import distributed
+
 # Module
 import googlenet
 
@@ -82,7 +86,8 @@ if args.distributed:
     if args.use_cuda:
         print('===> DistributedDataParallel')
         net.to(device)
-        net = torch.nn.parallel.DistributedDataParallel(net)
+        net = distributed.DistributedDataParallel(net)
+        # net = torch.nn.parallel.DistributedDataParallel(net)
     else:
         print('===> DistributedDataParallelCPU')
         net = torch.nn.parallel.DistributedDataParallelCPU(net)
